@@ -4,6 +4,7 @@ public class SignInResponseDto {
     private String status;
     private String token;
 
+
     public String getStatus() {
         return status;
     }
@@ -19,6 +20,8 @@ public class SignInResponseDto {
     public void setToken(String token) {
         this.token = token;
     }
+
+
 
     public SignInResponseDto(String status, String token) {
         this.status = status;

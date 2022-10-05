@@ -1,6 +1,7 @@
 package com.app.wallet.controller;
 
-import com.app.wallet.dto.WalletDto;
+import com.app.wallet.dto.TransactionDto;
+import com.app.wallet.exceptions.CustomException;
 import com.app.wallet.model.Wallet;
 import com.app.wallet.service.AuthenticationService;
 import com.app.wallet.service.UserService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,15 +28,17 @@ public class WalletController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/myWallet")
-    public ResponseEntity<Wallet> myWallet(@RequestBody String authToken) throws NullPointerException {
-        Wallet wallet = walletService.getWalletBalance(authenticationService.getUser(authToken).getId());
+    @GetMapping("/myWallet")
+    public ResponseEntity<Wallet> myWallet(@RequestHeader("Authorization") String authToken) throws NullPointerException, CustomException {
+
+        Wallet wallet = walletService.getWalletBalance(authenticationService.getUser(authToken).getId(), authToken);
         return ResponseEntity.ok(wallet);
     }
 
     @PostMapping("/addMoney")
-    public ResponseEntity<WalletDto> addMoney (@RequestBody String authToken, @RequestBody Integer money) throws NullPointerException {
-        WalletDto wallet = walletService.addMoney(authenticationService.getUser(authToken).getId(), money);
+    public ResponseEntity<Wallet> addMoney (@RequestHeader String authToken, @RequestBody Integer money) throws NullPointerException, CustomException {
+        TransactionDto dto = new TransactionDto();
+        Wallet wallet = walletService.addMoney(dto);
         return ResponseEntity.ok(wallet);
     }
 }

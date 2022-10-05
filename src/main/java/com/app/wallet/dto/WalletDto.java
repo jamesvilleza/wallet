@@ -2,17 +2,18 @@ package com.app.wallet.dto;
 
 
 public class WalletDto {
-    private Integer amount;
+    private String token;
 
-    public WalletDto(Integer amount) {
-        this.amount = amount;
+    public WalletDto(Integer amount, String token) {
+        this.token = token;
     }
 
-    public Integer getAmount() {
-        return amount;
+    public String getToken() {
+        return token;
     }
 
-    public void setAmount(Integer amount) {
-        this.amount = amount;
+    public void setToken(String token) {
+        this.token = token;
     }
+
 }

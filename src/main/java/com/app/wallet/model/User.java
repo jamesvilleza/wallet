@@ -2,9 +2,12 @@ package com.app.wallet.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,11 +29,16 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User(String firstName, String lastName, String email, String password) {
+    @OneToOne(targetEntity = Wallet.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "wallet_id")
+    private Wallet wallet;
+
+    public User(String firstName, String lastName, String email, String password, Wallet wallet) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.wallet = wallet;
     }
 
 
@@ -73,7 +81,17 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
+    }
+
     public User() {
     }
+
 
 }

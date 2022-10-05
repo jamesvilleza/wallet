@@ -9,10 +9,12 @@ import com.app.wallet.exceptions.AuthenticationFailException;
 import com.app.wallet.exceptions.CustomException;
 import com.app.wallet.model.AuthenticationToken;
 import com.app.wallet.model.User;
+import com.app.wallet.model.Wallet;
 import com.app.wallet.repository.UserRepository;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,9 @@ public class UserService {
 
     @Autowired
     AuthenticationService authenticationService;
+
+    @Autowired
+    WalletService walletService;
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public SignUpResponseDto signUp(SignupDto signupDto)  throws CustomException {
@@ -37,6 +42,7 @@ public class UserService {
         }
         // first encrypt the password
         String encryptedPassword = signupDto.getPassword();
+        Wallet wallet = walletService.createWallet(signupDto);
         try {
             encryptedPassword = hashPassword(signupDto.getPassword());
         } catch (NoSuchAlgorithmException e) {
@@ -45,7 +51,7 @@ public class UserService {
         }
 
 
-        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), encryptedPassword );
+        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), encryptedPassword, wallet);
         try {
             userRepository.save(user);
             final AuthenticationToken authenticationToken = new AuthenticationToken(user);
@@ -58,6 +64,7 @@ public class UserService {
     public SignInResponseDto signIn(SignInDto signInDto) throws AuthenticationFailException, CustomException {
         // first find User by email
         User user = userRepository.findByEmail(signInDto.getEmail());
+
         if(!Objects.nonNull(user)){
             throw new AuthenticationFailException("user not present");
         }
@@ -81,6 +88,11 @@ public class UserService {
         }
 
         return new SignInResponseDto ("Signed in successfully", token.getToken());
+    }
+
+    public User getUser(String email) {
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByEmail(email));
+        return optionalUser.orElse(null);
     }
     String hashPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");

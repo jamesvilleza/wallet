@@ -5,7 +5,6 @@ public class SignupDto {
     private String lastName;
     private String email;
     private String password;
-    private Integer amount;
 
     public String getFirstName() {
         return firstName;
@@ -39,11 +38,4 @@ public class SignupDto {
         this.password = password;
     }
 
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Integer amount) {
-        this.amount = amount;
-    }
 }
